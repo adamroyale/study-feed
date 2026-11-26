@@ -1,0 +1,4 @@
+/* List of courses shown on the home page. Each course lives in courses/<code>/ with its own cards.js. */
+window.COURSES = [
+  { code: "ivr1", title: "Ivrit", subtitle: "Grade 9 Hebrew", path: "courses/ivr1/" }
+];

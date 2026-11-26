@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Progress · Study Feed</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/store.js"></script>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <a class="back" href="./">‹ Courses</a>
+      <button class="icon-btn" id="theme-btn" aria-label="Toggle light and dark mode">◐</button>
+    </div>
+    <h1 class="title">Progress</h1>
+    <p class="subtitle">For parents. Saved only in this browser on this device.</p>
+
+    <div class="stat-grid" id="stats"></div>
+
+    <div class="section-label">Parent mode</div>
+    <label class="switch">
+      <span>Don't record my own practice<br><span class="row-meta">While on, nothing you do in the feed is saved.</span></span>
+      <input type="checkbox" id="parent-mode">
+    </label>
+
+    <div class="section-label">Weakest topics</div>
+    <div id="weak"></div>
+
+    <div class="section-label">Best scores</div>
+    <div id="best"></div>
+
+    <div class="section-label">Recent sessions</div>
+    <div id="sessions"></div>
+
+    <div class="section-label">Reset</div>
+    <button class="btn danger" id="reset">Erase all progress on this device</button>
+  </div>
+  <script src="courses/index.js"></script>
+  <script src="assets/progress.js"></script>
+</body>
+</html>

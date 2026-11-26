@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Study Feed</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/store.js"></script>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <span class="brand">Study Feed</span>
+      <button class="icon-btn" id="theme-btn" aria-label="Toggle light and dark mode">◐</button>
+    </div>
+    <h1 class="title">Courses</h1>
+    <p class="subtitle">Pick a course, then a deck. Swipe up through the cards.</p>
+    <div class="list" id="courses"></div>
+    <div class="section-label">For parents</div>
+    <div class="list">
+      <a class="row" href="progress.html">
+        <div><div class="row-title">Progress</div><div class="row-meta">Sessions, best scores, weakest topics</div></div>
+        <span class="chev">›</span>
+      </a>
+    </div>
+  </div>
+  <script src="courses/index.js"></script>
+  <script>
+    (function () {
+      var data = SF.load();
+      var list = document.getElementById("courses");
+      window.COURSES.forEach(function (c) {
+        var missed = SF.missedIds(data, c.code + "-").length;
+        var a = document.createElement("a");
+        a.className = "row";
+        a.href = c.path;
+        a.innerHTML = '<div><div class="row-title">' + SF.esc(c.title) + '</div><div class="row-meta">' + SF.esc(c.subtitle) + "</div></div>" +
+          '<span class="row-right">' + (missed ? '<span class="pill bad">' + missed + " missed</span>" : "") + '<span class="chev">›</span></span>';
+        list.appendChild(a);
+      });
+      document.getElementById("theme-btn").addEventListener("click", SF.toggleTheme);
+    })();
+  </script>
+</body>
+</html>

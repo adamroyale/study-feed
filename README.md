@@ -1,26 +1,50 @@
 # Study Feed
 
-A personalized feed for discovering, organizing, and reviewing study content.
+A phone-first study site that feels like scrolling a clean social feed: one idea per card, swipe up for the next one. Plain HTML, CSS and JavaScript with no build step, hosted on GitHub Pages.
 
-## About
+## How it works
 
-Study Feed helps learners keep their study resources in one place and makes it easier to continue learning over time.
+- **Home** (`index.html`) lists the courses. Each course has its own folder under `courses/`.
+- **Course page** (`courses/<code>/index.html`) lists decks: one per lesson, a *Mixed review* deck per unit, and *Ones I've missed*.
+- **Feed** (`courses/<code>/feed.html?deck=<id>`) plays a deck as full-screen cards with scroll snapping.
+- **Progress** (`progress.html`) is a small view for parents: decks finished, first-try accuracy, weakest topics, best scores and recent sessions. It has a *parent mode* switch so a parent's own practice is not recorded, and a reset button.
 
-## Features
+Light and dark mode follow the device setting; the ◐ button overrides it.
 
-- Collect useful study materials
-- Organize learning resources
-- Review recent study activity
-- Build a consistent learning routine
+## Card types
 
-## Getting Started
+| Type | What it does |
+|---|---|
+| Explainer | One concept in a few short lines, with an example |
+| Key term | The term, tap to reveal the meaning |
+| Quick check | Multiple choice or true/false, instant feedback with a one-line "why" |
 
-This repository is currently in its initial setup stage. Add the project's setup and run instructions here as the implementation develops.
+A quick check answered wrong comes back three cards later in the same session. Cards whose last answer was wrong make up the *Ones I've missed* deck; answering one correctly removes it from that deck.
 
-## Contributing
+## Progress storage
 
-Contributions are welcome. Please open an issue to discuss significant changes before submitting a pull request.
+Everything is saved in the browser's `localStorage` under the key `studyfeed:v1`. Nothing leaves the device. Clearing site data, or using another browser or device, starts fresh.
 
-## License
+## Adding content
 
-License information has not yet been added.
+Each course's cards live in `courses/<code>/cards.js`. Rules that keep progress tracking working:
+
+- Every card has a stable id of the form `<course>-<unit>-<lesson>-<short>`. Never rename or reuse an id.
+- Add new cards at the **end** of a lesson's list. Add new lessons at the end of a unit.
+- Hebrew (or any right-to-left text) goes inside `«…»` so it renders right-to-left.
+
+To add a course: create `courses/<code>/` with `cards.js`, `index.html` and `feed.html` (copy them from `courses/ivr1/`), then add the course to `courses/index.js`.
+
+## Privacy
+
+The site contains no names of students, schools or teachers. Card text is written in our own words from study notes, not copied from class handouts.
+
+## Local preview
+
+Any static server works, for example:
+
+```
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000/`.
