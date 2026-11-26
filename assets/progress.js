@@ -32,7 +32,8 @@
     }
     btn.addEventListener("click", function () { SFSync.flush(); setTimeout(refresh, 2500); });
     refresh();
-    setTimeout(refresh, 3000);
+    var ticks = 0;
+    var timer = setInterval(function () { refresh(); if (++ticks > 10 || !SFSync.queued()) clearInterval(timer); }, 1500);
   })();
 
   document.getElementById("reset").addEventListener("click", function () {
