@@ -26,7 +26,7 @@ function setup() {
   // The summary formulas are (re)written on every run, so running setup again repairs them.
   var summary = ss.getSheetByName("summary") || ss.insertSheet("summary");
   summary.getRange("A1").setValue("Right and wrong answers by lesson (all devices)");
-  summary.getRange("A2").setFormula('=IFERROR(QUERY(events!A:I, "select F, count(G) where G=\'right\' or G=\'wrong\' group by F pivot G", 1), "no answers yet")');
+  summary.getRange("A2").setFormula('=IFERROR(QUERY(events!A:I, "select F, count(E) where G=\'right\' or G=\'wrong\' group by F pivot G", 1), "no answers yet")');
   summary.getRange("F1").setValue("Best score per deck");
   summary.getRange("F2").setFormula('=IFERROR(QUERY(sessions!A:K, "select B, E, max(I) group by B, E label B \'device\', E \'deck\', max(I) \'best %\'", 1), "no sessions yet")');
   summary.getRange("K1").setValue("Answers per day");
