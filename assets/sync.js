@@ -45,27 +45,38 @@
     return JSON.stringify({ key: cfg.key || "", device: deviceId(), items: items });
   }
 
-  /* Posts the queue. Apps Script does not answer CORS preflights, so the request is sent as
-     text/plain with no-cors; the reply is opaque and a completed request is treated as delivered. */
+  /* Posts the queue. The body goes as text/plain so the browser sends no CORS preflight
+     (Apps Script cannot answer one). Events are removed from the queue only when the script
+     replies {ok:true}; a sign-in page, a 403 or a network error leaves them queued. */
+  var lastError = "";
+  var confirmedOnce = false;
+  try { confirmedOnce = sessionStorage.getItem("studyfeed:sync-ok") === "1"; } catch (e) {}
   function flush() {
     if (!enabled() || sending || parentMode()) return;
     var box = readBox();
     if (!box.length) return;
     sending = true;
     var batch = box.slice(0, 100);
-    fetch(cfg.endpoint, { method: "POST", mode: "no-cors", body: payload(batch), headers: { "Content-Type": "text/plain" }, keepalive: true })
-      .then(function () {
+    fetch(cfg.endpoint, { method: "POST", body: payload(batch), headers: { "Content-Type": "text/plain" }, redirect: "follow" })
+      .then(function (res) { return res.ok ? res.json() : Promise.reject(new Error("HTTP " + res.status)); })
+      .then(function (json) {
+        if (!json || !json.ok) throw new Error(json && json.error ? json.error : "not accepted");
         var rest = readBox().slice(batch.length);
         writeBox(rest);
+        lastError = "";
+        confirmedOnce = true;
+        try { sessionStorage.setItem("studyfeed:sync-ok", "1"); } catch (e) {}
         sending = false;
         if (rest.length) flush();
       })
-      .catch(function () { sending = false; });
+      .catch(function (err) { lastError = String(err && err.message || err); sending = false; });
   }
 
-  /* On leaving the page, hand what is left to sendBeacon so it survives navigation. */
+  /* On leaving the page, hand what is left to sendBeacon so it survives navigation.
+     Only once a normal send has been confirmed in this session, so a misconfigured
+     endpoint never swallows events. */
   function flushOnLeave() {
-    if (!enabled() || parentMode() || !navigator.sendBeacon) return;
+    if (!enabled() || parentMode() || !navigator.sendBeacon || !confirmedOnce) return;
     var box = readBox();
     if (!box.length) return;
     var ok = navigator.sendBeacon(cfg.endpoint, new Blob([payload(box.slice(0, 100))], { type: "text/plain" }));
@@ -74,6 +85,6 @@
   document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") flushOnLeave(); });
   window.addEventListener("pagehide", flushOnLeave);
 
-  window.SFSync = { enqueue: enqueue, flush: flush, deviceId: deviceId, enabled: enabled, queued: function () { return readBox().length; } };
+  window.SFSync = { enqueue: enqueue, flush: flush, deviceId: deviceId, enabled: enabled, queued: function () { return readBox().length; }, lastError: function () { return lastError; } };
   flush();
 })();

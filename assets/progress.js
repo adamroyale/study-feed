@@ -24,13 +24,15 @@
         st.textContent = "Not set up";
         meta.textContent = "Progress stays on this device. See SHEET-SETUP.md in the repo to connect a Google Sheet." + (q ? " " + q + " events are waiting." : "");
       } else {
-        st.textContent = "Connected";
-        meta.textContent = q ? q + " events waiting to send." : "All events sent.";
+        var err = SFSync.lastError();
+        st.textContent = err ? "Connected, but the last send failed" : "Connected";
+        meta.textContent = (q ? q + " events waiting to send." : "All events sent.") + (err ? " Last error: " + err + ". Check the web app is deployed with access set to Anyone." : "");
         btn.style.display = q ? "block" : "none";
       }
     }
-    btn.addEventListener("click", function () { SFSync.flush(); setTimeout(refresh, 1500); });
+    btn.addEventListener("click", function () { SFSync.flush(); setTimeout(refresh, 2500); });
     refresh();
+    setTimeout(refresh, 3000);
   })();
 
   document.getElementById("reset").addEventListener("click", function () {
