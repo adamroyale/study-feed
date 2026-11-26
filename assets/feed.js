@@ -50,7 +50,7 @@
   }
 
   var deck = { id: deckId, title: "", cards: [], kind: "lesson" };
-  var mixMatch = /^(u\d+)-mix$/.exec(deckId);
+  var mixMatch = /^(.+)-mix$/.exec(deckId);
   if (deckId === "missed") {
     var missed = SF.missedIds(data, course.code + "-");
     deck.title = "Ones I've missed";

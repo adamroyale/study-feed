@@ -72,7 +72,7 @@
     var cd = loaded[code];
     if (!cd) return deck;
     if (deck === "missed") return "Ones I've missed";
-    var m = /^(u\d+)-mix$/.exec(deck);
+    var m = /^(.+)-mix$/.exec(deck);
     for (var i = 0; i < cd.units.length; i++) {
       var u = cd.units[i];
       if (m && u.id === m[1]) return "Mixed review · " + u.short;
