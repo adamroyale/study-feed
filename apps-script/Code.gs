@@ -23,15 +23,16 @@ var HEADERS = {
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   ensureSheets_(ss);
+  // The summary formulas are (re)written on every run, so running setup again repairs them.
   var summary = ss.getSheetByName("summary") || ss.insertSheet("summary");
-  if (summary.getLastRow() === 0) {
-    summary.getRange("A1").setValue("Accuracy by lesson (all devices)");
-    summary.getRange("A2").setFormula('=IFERROR(QUERY(events!A:I, "select F, count(G), sum(case when G=\'right\' then 1 else 0 end) where G=\'right\' or G=\'wrong\' group by F label F \'lesson\', count(G) \'answers\', sum(case when G=\'right\' then 1 else 0 end) \'right\'", 1), "no answers yet")');
-    summary.getRange("F1").setValue("Best score per deck");
-    summary.getRange("F2").setFormula('=IFERROR(QUERY(sessions!A:K, "select B, E, max(I) group by B, E label B \'device\', E \'deck\', max(I) \'best %\'", 1), "no sessions yet")');
-    summary.getRange("K1").setValue("Answers per day");
-    summary.getRange("K2").setFormula('=IFERROR(QUERY(events!A:I, "select toDate(A), count(G) where G=\'right\' or G=\'wrong\' group by toDate(A) order by toDate(A) desc label toDate(A) \'day\', count(G) \'answers\'", 1), "no answers yet")');
-  }
+  summary.getRange("A1").setValue("Right and wrong answers by lesson (all devices)");
+  summary.getRange("A2").setFormula('=IFERROR(QUERY(events!A:I, "select F, count(G) where G=\'right\' or G=\'wrong\' group by F pivot G label F \'lesson\'", 1), "no answers yet")');
+  summary.getRange("F1").setValue("Best score per deck");
+  summary.getRange("F2").setFormula('=IFERROR(QUERY(sessions!A:K, "select B, E, max(I) group by B, E label B \'device\', E \'deck\', max(I) \'best %\'", 1), "no sessions yet")');
+  summary.getRange("K1").setValue("Answers per day");
+  summary.getRange("K2").setFormula('=IFERROR(QUERY(events!A:I, "select toDate(A), count(G) where G=\'right\' or G=\'wrong\' group by toDate(A) order by toDate(A) desc label toDate(A) \'day\', count(G) \'answers\'", 1), "no answers yet")');
+  summary.getRange("K3:K1000").setNumberFormat("yyyy-mm-dd");
+  summary.getRange("A1:L1").setFontWeight("bold");
   var first = ss.getSheets()[0];
   if (first.getName() === "Sheet1" && first.getLastRow() === 0) ss.deleteSheet(first);
 }
