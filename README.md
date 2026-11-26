@@ -23,7 +23,11 @@ A quick check answered wrong comes back three cards later in the same session. C
 
 ## Progress storage
 
-Everything is saved in the browser's `localStorage` under the key `studyfeed:v1`. Nothing leaves the device. Clearing site data, or using another browser or device, starts fresh.
+Everything is saved in the browser's `localStorage` under the key `studyfeed:v1`. Clearing site data, or using another browser or device, starts fresh.
+
+## Optional: sync to a Google Sheet
+
+With an Apps Script endpoint set in `assets/config.js`, the site also sends each answer and each finished deck to a private Google Sheet, so a parent can follow progress from any device. It sends only a random device id, card ids, right or wrong, scores and timestamps. Events queue in the browser and are sent in batches, so offline use still works. Parent mode stops both saving and sending. The script is in `apps-script/Code.gs` and the walkthrough is in [SHEET-SETUP.md](SHEET-SETUP.md).
 
 ## Adding content
 

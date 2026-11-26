@@ -14,6 +14,25 @@
     SF.save(data);
   });
 
+  (function syncStatus() {
+    var st = document.getElementById("sync-status"), meta = document.getElementById("sync-meta"), btn = document.getElementById("sync-now");
+    if (!window.SFSync) return;
+    document.getElementById("device-id").textContent = SFSync.deviceId();
+    function refresh() {
+      var q = SFSync.queued();
+      if (!SFSync.enabled()) {
+        st.textContent = "Not set up";
+        meta.textContent = "Progress stays on this device. See SHEET-SETUP.md in the repo to connect a Google Sheet." + (q ? " " + q + " events are waiting." : "");
+      } else {
+        st.textContent = "Connected";
+        meta.textContent = q ? q + " events waiting to send." : "All events sent.";
+        btn.style.display = q ? "block" : "none";
+      }
+    }
+    btn.addEventListener("click", function () { SFSync.flush(); setTimeout(refresh, 1500); });
+    refresh();
+  })();
+
   document.getElementById("reset").addEventListener("click", function () {
     if (confirm("Erase all sessions and card history saved in this browser? This cannot be undone.")) {
       SF.reset();

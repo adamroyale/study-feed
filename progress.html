@@ -7,6 +7,8 @@
   <title>Progress · Study Feed</title>
   <link rel="stylesheet" href="assets/style.css">
   <script src="assets/store.js"></script>
+  <script src="assets/config.js"></script>
+  <script src="assets/sync.js"></script>
 </head>
 <body>
   <div class="page">
@@ -24,6 +26,14 @@
       <span>Don't record my own practice<br><span class="row-meta">While on, nothing you do in the feed is saved.</span></span>
       <input type="checkbox" id="parent-mode">
     </label>
+
+    <div class="section-label">Google Sheet sync</div>
+    <div class="row" style="display:block">
+      <div class="row-title" id="sync-status">Not set up</div>
+      <div class="row-meta" id="sync-meta"></div>
+      <div class="row-meta" style="margin-top:8px">This device's id: <b id="device-id"></b></div>
+      <button class="btn" id="sync-now" style="display:none">Send queued events now</button>
+    </div>
 
     <div class="section-label">Weakest topics</div>
     <div id="weak"></div>

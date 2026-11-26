@@ -169,6 +169,7 @@
           if (right) session.right += 1; else session.wrong += 1;
         }
         SF.save(data);
+        if (window.SFSync) SFSync.enqueue({ type: "answer", course: course.code, deck: deck.id, card: c.id, lesson: c.lessonId, result: right ? "right" : "wrong", retry: !!isRetry, session: session ? session.id : "" });
       }
       if (!right) scheduleRetry(c, s.sec);
       updateCounter();
@@ -264,7 +265,10 @@
       scoreEl.textContent = "Done";
       sub.textContent = "No quick checks in this deck.";
     }
-    if (session) { session.done = true; session.endedAt = Date.now(); SF.save(data); }
+    if (session) {
+      session.done = true; session.endedAt = Date.now(); SF.save(data);
+      if (window.SFSync) SFSync.enqueue({ type: "session", course: course.code, deck: deck.id, title: deck.title, quizzes: session.quizzes, right: session.right, wrong: session.wrong, seconds: Math.round((session.endedAt - session.startedAt) / 1000), session: session.id });
+    }
     var actions = document.getElementById("end-actions");
     var stillMissed = SF.missedIds(data, course.code + "-").length;
     var html = "";
